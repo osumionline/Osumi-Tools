@@ -1,6 +1,6 @@
 {
 	"name": "@osumi/tools",
-	"version": "1.0.0",
+	"version": "1.1.1",
 	"description": "Conjunto de herramientas para usar en proyectos Angular",
 	"main": "lib/index.js",
 	"types": "lib/index.d.ts",

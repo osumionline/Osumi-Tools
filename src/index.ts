@@ -12,7 +12,7 @@ export function toNumber(str: string): number {
 	return parseFloat(str.replace(',', '.'));
 }
 
-export function urlencode(str: string): string | null {
+export function urlencode(str: string | null): string | null {
 	if (str === null) {
 		return null;
 	}
@@ -26,7 +26,7 @@ export function urlencode(str: string): string | null {
 		.replace(/\~/g, '%7E');
 }
 
-export function urldecode(str: string): string {
+export function urldecode(str: string | null): string {
 	if (!str) {
 		return '';
 	}
@@ -85,6 +85,63 @@ export function hexToRgbFloat(hex: string): ColorValues | null {
 export function addDays(date: Date, number: number): Date {
 	const newDate = new Date(date);
 	return new Date(newDate.setDate(date.getDate() + number));
+}
+
+export function getDate(date: Date): string | null {
+	if (date === null) {
+		return null;
+	}
+	const day: string =
+		date.getDate() < 10 ? '0' + date.getDate() : date.getDate().toString();
+	const month: string =
+		date.getMonth() + 1 < 10
+			? '0' + (date.getMonth() + 1)
+			: (date.getMonth() + 1).toString();
+
+	return day + '/' + month + '/' + date.getFullYear();
+}
+
+export function getCurrentDate(): string {
+	const d: Date = new Date();
+	return (
+		d.getFullYear() +
+		'-' +
+		(d.getMonth() + 1 < 10 ? '0' + (d.getMonth() + 1) : d.getMonth() + 1) +
+		'-' +
+		(d.getDate() < 10 ? '0' + d.getDate() : d.getDate())
+	);
+}
+
+export function getDateFromString(str: string): Date | null {
+	if (str === null) {
+		return null;
+	}
+	let day: number = 0;
+	let month: number = 0;
+	let year: number = 0;
+	let hour: number = 0;
+	let minutes: number = 0;
+	let seconds: number = 0;
+
+	if (str.includes(' ')) {
+		const strParts: string[] = str.split(' ');
+		const dateParts: string[] = strParts[0].split('/');
+		const hourParts: string[] = strParts[1].split(':');
+		day = parseInt(dateParts[0]);
+		month = parseInt(dateParts[1]) - 1;
+		year = parseInt(dateParts[2]);
+		hour = parseInt(hourParts[0]);
+		minutes = parseInt(hourParts[1]);
+		seconds = parseInt(hourParts[2]);
+	} else {
+		const dateParts: string[] = str.split('/');
+		day = parseInt(dateParts[0]);
+		month = parseInt(dateParts[1]) - 1;
+		year = parseInt(dateParts[2]);
+	}
+
+	const date: Date = new Date(year, month, day, hour, minutes, seconds);
+	return date;
 }
 
 export function getTwoNumberDecimal(value: number): number {

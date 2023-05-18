@@ -1,5 +1,6 @@
 {
 	"compilerOptions": {
+		"moduleResolution": "node",
 		"target": "ES2022",
 		"module": "es2020",
 		"declaration": true,
