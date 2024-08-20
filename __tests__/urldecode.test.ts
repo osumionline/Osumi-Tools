@@ -1,5 +1,5 @@
 import { urldecode } from '../src/index';
 
 test('urldecode', (): void => {
-	expect(urldecode('test+osumi+urlencode')).toBe('test osumi urlencode');
+	expect(urldecode('test+osumi+urldecode')).toBe('test osumi urldecode');
 });

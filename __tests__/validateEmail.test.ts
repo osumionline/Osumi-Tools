@@ -1,6 +1,6 @@
 import { validateEmail } from '../src/index';
 
 test('validateEmail', (): void => {
-	expect(validateEmail('prueba@ejemplo.com')).toBe(true);
-	expect(validateEmail('prueba@ejemplo')).toBe(false);
+	expect(validateEmail('test@example.com')).toBe(true);
+	expect(validateEmail('test@example')).toBe(false);
 });

@@ -1,10 +1,37 @@
-export function formatNumber(num: number): string {
+/**
+ * Function to format a given number to a string with the given decimal amount.
+ *
+ * @param {number} num - The number to be formatted.
+ * @param {number} decimals - The number of decimals to be returned.
+ *
+ * @returns {string} The formatted number string.
+ *
+ * @example
+ * formatNumber(15.267);
+ * // Returns "15,26"
+ *
+ * @example
+ * formatNumber(15.267, 3);
+ * // Returns "15,267"
+ */
+export function formatNumber(num: number, decimals: number = 2): string {
 	if (num === null || num === undefined) {
 		return '';
 	}
-	return num.toFixed(2).replace('.', ',');
+	return num.toFixed(decimals).replace('.', ',');
 }
 
+/**
+ * Function to format a given string to a number.
+ *
+ * @param {string} str - The string number to be formatted.
+ *
+ * @returns {number} The formatted number.
+ *
+ * @example
+ * toNumber("15,267");
+ * // Returns 15.267
+ */
 export function toNumber(str: string): number {
 	if (str === null || str === undefined || str === '') {
 		return 0;
@@ -12,8 +39,19 @@ export function toNumber(str: string): number {
 	return parseFloat(str.replace(',', '.'));
 }
 
+/**
+ * Function to safely URLEncode a string. Returns null if null is given.
+ *
+ * @param {string | null} str - The string encoded.
+ *
+ * @returns {string | null} The encoded string.
+ *
+ * @example
+ * urlencode("test osumi urlencode");
+ * // Returns "test+osumi+urlencode"
+ */
 export function urlencode(str: string | null): string | null {
-	if (str === null) {
+	if (str === null || str === undefined) {
 		return null;
 	}
 	return encodeURIComponent(str)
@@ -26,8 +64,19 @@ export function urlencode(str: string | null): string | null {
 		.replace(/\~/g, '%7E');
 }
 
+/**
+ * Function to decode a previously encoded string. Returns null if null is given.
+ *
+ * @param {string | null} str - The previously encoded string.
+ *
+ * @returns {string} The decoded string.
+ *
+ * @example
+ * urldecode("test+osumi+urldecode");
+ * // Returns "test osumi urldecode"
+ */
 export function urldecode(str: string | null): string {
-	if (!str) {
+	if (str === null || str === undefined || str === '') {
 		return '';
 	}
 	return decodeURIComponent(
@@ -42,18 +91,70 @@ export function urldecode(str: string | null): string {
 	);
 }
 
+/**
+ * Function to validate the correct structure of an email address.
+ *
+ * @param {string} email - The email address to be validated.
+ *
+ * @returns {boolean} True if is a valid email address or false otherwise.
+ *
+ * @example
+ * validateEmail("test@example.com");
+ * // Returns true
+ *
+ * @example
+ * validateEmail("test@example");
+ * // Returns false
+ */
 export function validateEmail(email: string): boolean {
 	const re =
 		/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 	return re.test(email.toLowerCase());
 }
 
+/**
+ * Represents RGB color values.
+ */
 export interface ColorValues {
+	/**
+   * The red component of the color.
+   * @type {number}
+   */
 	r: number;
+
+	/**
+   * The green component of the color.
+   * @type {number}
+   */
 	g: number;
+
+	/**
+   * The blue component of the color.
+   * @type {number}
+   */
 	b: number;
 }
 
+/**
+ * Function to convert a value in a range (i.e. hexadecimal value) to a value in a new range (i.e. decimal).
+ *
+ * @param {number} value - The original value to be converted.
+ * @param {number} oldMin - The smallest value of the old range.
+ * @param {number} oldMax - The maximum value of the old range.
+ * @param {number} newMin - The smallest value of the new range.
+ * @param {number} newMax - The maximum value of the new range.
+ *
+ * @returns {number} The given number converted to the new range.
+ *
+ * @example
+ * convertRange(parseInt('ff', 16), 0, 255, 0, 1);
+ * // Returns 1
+ *
+ * @example
+ * const celsius = 25;
+ * const fahrenheit = convertRange(celsius, 0, 100, 32, 212);
+ * console.log(fahrenheit); // Returns 77
+ */
 export function convertRange(
 	value: number,
 	oldMin: number,
@@ -70,6 +171,17 @@ export function convertRange(
 	);
 }
 
+/**
+ * Function to get the numerical values of an hexadecimal color value (i.e. FF0000 -> {r: 1, g: 0, b: 0}
+ *
+ * @param {string} hex - The color on hexadecimal format.
+ *
+ * @returns {ColorValues | null} The ColorValues object or null if there was an error.
+ *
+ * @example
+ * hexToRgbFloat('#ff0000');
+ * // Returns {"r":1,"g":0,"b":0}
+ */
 export function hexToRgbFloat(hex: string): ColorValues | null {
 	const result: RegExpExecArray | null =
 		/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -82,25 +194,129 @@ export function hexToRgbFloat(hex: string): ColorValues | null {
 		: null;
 }
 
+/**
+ * Function to add a number of days to a given Date object.
+ *
+ * @param {Date} date - The original date to which days are going to be added.
+ * @param {number} number - The number of days to be added.
+ *
+ * @returns {Date} The new date.
+ *
+ * @example
+ * addDays(new Date(2023, 0, 1, 0, 0, 0, 0), 2)
+ * // Returns "Tue Jan 03 2023 00:00:00 GMT+0100"
+ */
 export function addDays(date: Date, number: number): Date {
 	const newDate = new Date(date);
 	return new Date(newDate.setDate(date.getDate() + number));
 }
 
-export function getDate(date: Date): string | null {
-	if (date === null) {
-		return null;
-	}
-	const day: string =
-		date.getDate() < 10 ? '0' + date.getDate() : date.getDate().toString();
-	const month: string =
-		date.getMonth() + 1 < 10
-			? '0' + (date.getMonth() + 1)
-			: (date.getMonth() + 1).toString();
+/**
+ * Formats a given date according to the specified configuration or returns the formatted date directly.
+ *
+ * @param {Date | { date: Date; separator?: string; withHours?: boolean; withSeconds?: boolean; leadingZeros?: boolean; ampm?: boolean; pattern?: string; }} dateOrConfig - A Date object or a configuration object.
+ *
+ * @returns {string} The formatted date string.
+ *
+ * @example
+ * getDate(new Date(2023, 0, 1));
+ * // Returns "01/01/2023"
+ *
+ * @example
+ * getDate({ date: new Date(2023, 0, 1), withHours: true, withSeconds: true, ampm: true, pattern: 'dmyhis' });
+ * // Returns "01/01/2023 12:00:00am"
+ */
+export function getDate(
+  dateOrConfig: Date | {
+    date: Date;
+    separator?: string;
+    withHours?: boolean;
+    withSeconds?: boolean;
+    leadingZeros?: boolean;
+    ampm?: boolean;
+    pattern?: string;
+  }
+): string {
+	const defaultConfig = {
+    separator: '/',
+    withHours: false,
+    withSeconds: false,
+    leadingZeros: true,
+    ampm: false,
+    pattern: 'dmyhis',
+  } as const;
 
-	return day + '/' + month + '/' + date.getFullYear();
+  const config = typeof dateOrConfig === 'object' && !(dateOrConfig instanceof Date)
+    ? { ...defaultConfig, ...dateOrConfig, date: dateOrConfig.date }
+    : { ...defaultConfig, date: dateOrConfig as Date };
+
+  const { date, separator, withHours: initialWithHours, withSeconds, leadingZeros, ampm, pattern } = config;
+
+	let withHours = initialWithHours;
+  if (withSeconds) {
+    withHours = true;
+  }
+
+  const pad = (num: number) => (leadingZeros && num < 10 ? `0${num}` : `${num}`);
+
+  const year = pad(date.getFullYear());
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  const seconds = pad(date.getSeconds());
+
+  const ampmStr = ampm ? (parseInt(hours) >= 12 ? 'pm' : 'am') : '';
+
+  if (!pattern.includes('d') || !pattern.includes('m') || !pattern.includes('y')) {
+    throw new Error('Pattern must contain at least these elements: "d", "m" and "y"');
+  }
+  if (withHours && (!pattern.includes('h') || !pattern.includes('i'))) {
+    throw new Error('If time is to be returned, pattern must contain "h" and "i"');
+  }
+  if (withSeconds && !pattern.includes('s')) {
+    throw new Error('If seconds are to be returned, pattern must contain "s"');
+  }
+
+	let formattedDate = '';
+  for (const char of pattern) {
+    switch (char) {
+      case 'd':
+        formattedDate += day + separator;
+        break;
+      case 'm':
+        formattedDate += month + separator;
+        break;
+      case 'y':
+        formattedDate += year + separator;
+        break;
+			case 'h':
+			case 'i':
+			case 's':
+				continue;
+      default:
+        throw new Error(`Unrecognized pattern: ${char}`);
+    }
+  }
+
+  formattedDate = formattedDate.slice(0, -1);
+
+  const timePart = withHours
+    ? `${ampm ? `${hours}:${minutes}` : `${hours}:${minutes}`}${withSeconds ? `:${seconds}` : ''}${ampmStr}`
+    : '';
+
+  return formattedDate + (timePart ? ' ' + timePart : '');
 }
 
+/**
+ * Returns current date as a string compatible with MySQL.
+ *
+ * @returns {string} The current date.
+ *
+ * @example
+ * getCurrentDate()
+ * // Returns '2024-08-19'
+ */
 export function getCurrentDate(): string {
 	const d: Date = new Date();
 	return (
@@ -112,6 +328,17 @@ export function getCurrentDate(): string {
 	);
 }
 
+/**
+ * Get a Date object from a date in a string.
+ *
+ * @param {string} str - A Date in a string.
+ *
+ * @returns {Date | null} The Date object or null if is an invalid date.
+ *
+ * @example
+ * getDateFromString('03/01/2023')
+ * // Returns "Tue Jan 03 2023 00:00:00 GMT+0100"
+ */
 export function getDateFromString(str: string): Date | null {
 	if (str === null) {
 		return null;
@@ -144,6 +371,17 @@ export function getDateFromString(str: string): Date | null {
 	return date;
 }
 
+/**
+ * Format a number with 2 decimals.
+ *
+ * @param {number} value - The number to be formatted.
+ *
+ * @returns {number} The formatted number.
+ *
+ * @example
+ * getTwoNumberDecimal(15.267845)
+ * // Returns 15.27
+ */
 export function getTwoNumberDecimal(value: number): number {
 	return parseFloat((Math.round(value * 100) / 100).toFixed(2));
 }
