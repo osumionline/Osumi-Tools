@@ -6,6 +6,7 @@ These are the available functions:
 
 -   **addDays**: Function to add a number of days to a given Date object.
 -   **bytesToSize**: Function to get a human readable size from an amount of bytes.
+-   **capitalize**: Function to capitalize the first letter of a string.
 -   **convertRange**: Function to convert a value in a range (i.e. hexadecimal value) to a value in a new range (i.e. decimal).
 -   **formatNumber**: Function to format a given number to a string with the given decimal amount.
 -   **getCurrentDate**: Returns current date as a string compatible with MySQL.
@@ -26,7 +27,7 @@ For example, you just need to include it on your package.json:
 
 ```
   "dependencies": {
-    "@osumi/tools": "^1.3.0",
+    "@osumi/tools": "^1.5.0",
   }
 ```
 

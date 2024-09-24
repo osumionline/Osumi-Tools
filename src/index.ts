@@ -62,6 +62,24 @@ export function bytesToSize(bytes: number): string {
 }
 
 /**
+ * Function to capitalize the first letter of a string.
+ *
+ * @param {string} str - String to capitalize.
+ *
+ * @returns {string} String with the first letter capitalized.
+ *
+ * @example
+ * capitalize('hello');
+ * // Returns 'Hello'
+ */
+export function capitalize(str: string | null): string | null {
+	if (str === null || str == '') {
+		return null;
+	}
+	return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
  * Function to convert a value in a range (i.e. hexadecimal value) to a value in a new range (i.e. decimal).
  *
  * @param {number} value - The original value to be converted.
