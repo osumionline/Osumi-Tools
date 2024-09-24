@@ -11,6 +11,7 @@ These are the available functions:
 -   **getCurrentDate**: Returns current date as a string compatible with MySQL.
 -   **getDate**: Formats a given date according to the specified configuration or returns the formatted date directly.
 -   **getDateFromString**: Get a Date object from a date in a string.
+-   **getRandomNumber**: Get a random number from a range (min, max).
 -   **getStringFromDate**: Get a string representation of a Date object.
 -   **getTwoNumberDecimal**: Format a number with 2 decimals.
 -   **hexToRgbFloat**: Function to get the numerical values of an hexadecimal color value (i.e. FF0000 -> {r: 1, g: 0, b: 0}

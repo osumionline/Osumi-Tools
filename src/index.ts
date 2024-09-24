@@ -305,6 +305,23 @@ export function getDateFromString(str: string): Date | null {
 }
 
 /**
+ * Get a random number from a range (min, max).
+ *
+ * @param {number} min - Minimum number to get.
+ *
+ * @param {number} max - Maximum number to get.
+ *
+ * @returns {number} Random number between min and max.
+ *
+ * @example
+ * getRandomNumber(1, 1000);
+ * // Returns 846, 321, 549 ...
+ */
+export function getRandomNumber(min: number, max: number): number {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/**
  * Get a string representation of a Date object (year-month-day). `withHours` indicates if (hour:minutes:seconds) should also be returned.
  *
  * @param {Date | null} date - A Date object or null.
