@@ -384,6 +384,65 @@ export function getStringFromDate(
 }
 
 /**
+ * Set a Date object to the start of the day (00:00:00.000).
+ *
+ * @param d - Date to set to start of day.
+ *
+ * @returns New Date object set to start of day.
+ *
+ * @example
+ * startOfDay(new Date(2023, 0, 1, 15, 30, 45, 123))
+ * // Returns "Sun Jan 01 2023 00:00:00 GMT+0100"
+ */
+export function startOfDay(d: Date): Date {
+	const x = new Date(d);
+	x.setHours(0, 0, 0, 0);
+	return x;
+}
+
+/**
+ * Set a Date object to the end of the day (23:59:59.999).
+ *
+ * @param d - Date to set to end of day.
+ *
+ * @returns New Date object set to end of day.
+ *
+ * @example
+ * endOfDay(new Date(2023, 0, 1, 15, 30, 45, 123))
+ * // Returns "Sun Jan 01 2023 23:59:59 GMT+0100"
+ */
+export function endOfDay(d: Date): Date {
+	const x = new Date(d);
+	x.setHours(23, 59, 59, 999);
+	return x;
+}
+
+/**
+ * Function to check if two date ranges overlap.
+ *
+ * @param {[Date, Date]} a - The first date range as a tuple [start, end].
+ * @param {[Date, Date]} b - The second date range as a tuple [start, end].
+ *
+ * @returns {boolean} True if the two date ranges overlap, false otherwise.
+ *
+ * @example
+ * const range1 = [new Date(2023, 0, 1), new Date(2023, 0, 10)];
+ * const range2 = [new Date(2023, 0, 5), new Date(2023, 0, 15)];
+ * rangesOverlap(range1, range2);
+ * // Returns true
+ *
+ * @example
+ * const range1 = [new Date(2023, 0, 1), new Date(2023, 0, 10)];
+ * const range2 = [new Date(2023, 0, 11), new Date(2023, 0, 20)];
+ * rangesOverlap(range1, range2);
+ * // Returns false
+ */
+export function rangesOverlap(a: [Date, Date], b: [Date, Date]): boolean {
+	// Solapan si el inicio de uno es <= fin del otro y viceversa
+	return a[0] <= b[1] && b[0] <= a[1];
+}
+
+/**
  * Format a number with 2 decimals.
  *
  * @param {number} value - The number to be formatted.
@@ -510,4 +569,52 @@ export function validateEmail(email: string): boolean {
 	const re =
 		/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 	return re.test(email.toLowerCase());
+}
+
+/**
+ * Function to normalize a string by converting it to lowercase, removing diacritics (accents), and trimming whitespace.
+ *
+ * @param {string} s - The string to be normalized.
+ *
+ * @returns {string} The normalized string.
+ *
+ * @example
+ * normalize('Árbol');
+ * // Returns 'arbol'
+ *
+ * @example
+ * normalize('  Café  ');
+ * // Returns 'cafe'
+ */
+export function normalize(s: string): string {
+	return (s || '')
+		.toLowerCase()
+		.normalize('NFD') // quitar tildes/acentos
+		.replace(/\p{Diacritic}/gu, '')
+		.trim();
+}
+
+/**
+ * Function to check if two strings are equal after normalizing them.
+ * Normalization includes converting to lowercase, removing diacritics (accents), and trimming whitespace.
+ *
+ * @param {string} [a] - The first string to compare.
+ * @param {string} [b] - The second string to compare.
+ *
+ * @returns {boolean} True if the normalized strings are equal, false otherwise.
+ *
+ * @example
+ * stringEquals('Árbol', 'arbol');
+ * // Returns true
+ *
+ * @example
+ * stringEquals('  Hello  ', 'hello');
+ * // Returns true
+ *
+ * @example
+ * stringEquals('Test', 'Different');
+ * // Returns false
+ */
+export function stringEquals(a?: string, b?: string): boolean {
+	return normalize(a || '') === normalize(b || '');
 }
