@@ -26,7 +26,7 @@
 	"homepage": "https://github.com/osumionline/Osumi-Tools#readme",
 	"devDependencies": {
 		"@types/jest": "^30.0.0",
-		"jest": "^30.2.0",
+		"jest": "^30.3.0",
 		"ts-jest": "^29.4.6",
 		"typedoc": "^0.28.17",
 		"typescript": "^5.9.3"
