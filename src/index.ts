@@ -4,21 +4,73 @@
 export interface ColorValues {
 	/**
 	 * The red component of the color.
-	 * @type {number}
 	 */
 	r: number;
 
 	/**
 	 * The green component of the color.
-	 * @type {number}
 	 */
 	g: number;
 
 	/**
 	 * The blue component of the color.
-	 * @type {number}
 	 */
 	b: number;
+}
+
+/**
+ * Configuration object used by getDate.
+ */
+export interface GetDateConfig {
+	/**
+	 * Date to format.
+	 */
+	date: Date;
+
+	/**
+	 * Separator used between date parts.
+	 *
+	 * @default '/'
+	 */
+	separator?: string;
+
+	/**
+	 * Indicates if hours and minutes should be returned.
+	 *
+	 * @default false
+	 */
+	withHours?: boolean;
+
+	/**
+	 * Indicates if seconds should also be returned.
+	 *
+	 * @default false
+	 */
+	withSeconds?: boolean;
+
+	/**
+	 * Indicates if single digit values should be padded with leading zeroes.
+	 *
+	 * @default true
+	 */
+	leadingZeros?: boolean;
+
+	/**
+	 * Indicates if time should be returned in 12-hour format with am/pm suffix.
+	 *
+	 * @default false
+	 */
+	ampm?: boolean;
+
+	/**
+	 * Order pattern for date parts.
+	 *
+	 * Supported date tokens: d, m, y
+	 * Supported time tokens: h, i, s
+	 *
+	 * @default 'dmyhis'
+	 */
+	pattern?: string;
 }
 
 /**
@@ -34,8 +86,9 @@ export interface ColorValues {
  * // Returns "Tue Jan 03 2023 00:00:00 GMT+0100"
  */
 export function addDays(date: Date, number: number): Date {
-	const newDate = new Date(date);
-	return new Date(newDate.setDate(date.getDate() + number));
+	const newDate: Date = new Date(date);
+	newDate.setDate(newDate.getDate() + number);
+	return newDate;
 }
 
 /**
@@ -51,31 +104,40 @@ export function addDays(date: Date, number: number): Date {
  */
 export function bytesToSize(bytes: number): string {
 	const sizes: string[] = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+
 	if (bytes === 0) {
 		return 'n/a';
 	}
+
 	const i: number = Math.floor(Math.log(bytes) / Math.log(1024));
+
 	if (i === 0) {
-		return `${bytes} ${sizes[i]})`;
+		return `${bytes} ${sizes[i]}`;
 	}
+
 	return `${(bytes / 1024 ** i).toFixed(1)} ${sizes[i]}`;
 }
 
 /**
  * Function to capitalize the first letter of a string.
  *
- * @param {string} str - String to capitalize.
+ * @param {string | null} str - String to capitalize.
  *
- * @returns {string} String with the first letter capitalized.
+ * @returns {string | null} String with the first letter capitalized.
  *
  * @example
  * capitalize('hello');
  * // Returns 'Hello'
  */
 export function capitalize(str: string | null): string | null {
-	if (str === null || str == '') {
+	if (str === null) {
 		return null;
 	}
+
+	if (str === '') {
+		return '';
+	}
+
 	return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
@@ -118,23 +180,27 @@ export function convertRange(
 /**
  * Function to format a given number to a string with the given decimal amount.
  *
- * @param {number} num - The number to be formatted.
+ * @param {number | null | undefined} num - The number to be formatted.
  * @param {number} decimals - The number of decimals to be returned.
  *
  * @returns {string} The formatted number string.
  *
  * @example
  * formatNumber(15.267);
- * // Returns "15,26"
+ * // Returns "15,27"
  *
  * @example
  * formatNumber(15.267, 3);
  * // Returns "15,267"
  */
-export function formatNumber(num: number, decimals: number = 2): string {
+export function formatNumber(
+	num: number | null | undefined,
+	decimals: number = 2
+): string {
 	if (num === null || num === undefined) {
 		return '';
 	}
+
 	return num.toFixed(decimals).replace('.', ',');
 }
 
@@ -149,6 +215,7 @@ export function formatNumber(num: number, decimals: number = 2): string {
  */
 export function getCurrentDate(): string {
 	const d: Date = new Date();
+
 	return (
 		d.getFullYear() +
 		'-' +
@@ -161,7 +228,7 @@ export function getCurrentDate(): string {
 /**
  * Formats a given date according to the specified configuration or returns the formatted date directly.
  *
- * @param {Date | { date: Date; separator?: string; withHours?: boolean; withSeconds?: boolean; leadingZeros?: boolean; ampm?: boolean; pattern?: string; }} dateOrConfig - A Date object or a configuration object.
+ * @param {Date | GetDateConfig} dateOrConfig - A Date object or a configuration object.
  *
  * @returns {string} The formatted date string.
  *
@@ -170,35 +237,29 @@ export function getCurrentDate(): string {
  * // Returns "01/01/2023"
  *
  * @example
- * getDate({ date: new Date(2023, 0, 1), withHours: true, withSeconds: true, ampm: true, pattern: 'dmyhis' });
+ * getDate({
+ *   date: new Date(2023, 0, 1),
+ *   withHours: true,
+ *   withSeconds: true,
+ *   ampm: true,
+ *   pattern: 'dmyhis'
+ * });
  * // Returns "01/01/2023 12:00:00am"
  */
-export function getDate(
-	dateOrConfig:
-		| Date
-		| {
-				date: Date;
-				separator?: string;
-				withHours?: boolean;
-				withSeconds?: boolean;
-				leadingZeros?: boolean;
-				ampm?: boolean;
-				pattern?: string;
-		  }
-): string {
-	const defaultConfig = {
+export function getDate(dateOrConfig: Date | GetDateConfig): string {
+	const defaultConfig: Required<Omit<GetDateConfig, 'date'>> = {
 		separator: '/',
 		withHours: false,
 		withSeconds: false,
 		leadingZeros: true,
 		ampm: false,
 		pattern: 'dmyhis'
-	} as const;
+	};
 
-	const config =
-		typeof dateOrConfig === 'object' && !(dateOrConfig instanceof Date)
-			? { ...defaultConfig, ...dateOrConfig, date: dateOrConfig.date }
-			: { ...defaultConfig, date: dateOrConfig as Date };
+	const config: { date: Date } & Required<Omit<GetDateConfig, 'date'>> =
+		dateOrConfig instanceof Date
+			? { ...defaultConfig, date: dateOrConfig }
+			: { ...defaultConfig, ...dateOrConfig };
 
 	const {
 		date,
@@ -211,21 +272,40 @@ export function getDate(
 	} = config;
 
 	let withHours: boolean = initialWithHours;
+
 	if (withSeconds) {
 		withHours = true;
 	}
 
-	const pad = (num: number): string =>
-		leadingZeros && num < 10 ? `0${num}` : `${num}`;
+	const pad = (num: number): string => {
+		if (leadingZeros && num < 10) {
+			return `0${num}`;
+		}
 
-	const year: string = pad(date.getFullYear());
+		return `${num}`;
+	};
+
+	const year: string = `${date.getFullYear()}`;
 	const month: string = pad(date.getMonth() + 1);
 	const day: string = pad(date.getDate());
-	const hours: string = pad(date.getHours());
+
+	const rawHours24: number = date.getHours();
 	const minutes: string = pad(date.getMinutes());
 	const seconds: string = pad(date.getSeconds());
 
-	const ampmStr: string = ampm ? (parseInt(hours) >= 12 ? 'pm' : 'am') : '';
+	let displayHours: number = rawHours24;
+	let ampmStr: string = '';
+
+	if (ampm) {
+		ampmStr = rawHours24 >= 12 ? 'pm' : 'am';
+		displayHours = rawHours24 % 12;
+
+		if (displayHours === 0) {
+			displayHours = 12;
+		}
+	}
+
+	const hours: string = pad(displayHours);
 
 	if (
 		!pattern.includes('d') ||
@@ -236,19 +316,21 @@ export function getDate(
 			'Pattern must contain at least these elements: "d", "m" and "y"'
 		);
 	}
+
 	if (withHours && (!pattern.includes('h') || !pattern.includes('i'))) {
 		throw new Error(
 			'If time is to be returned, pattern must contain "h" and "i"'
 		);
 	}
+
 	if (withSeconds && !pattern.includes('s')) {
-		throw new Error(
-			'If seconds are to be returned, pattern must contain "s"'
-		);
+		throw new Error('If seconds are to be returned, pattern must contain "s"');
 	}
 
+	const datePattern: string = pattern.replace(/[his]/g, '');
 	let formattedDate: string = '';
-	for (const char of pattern) {
+
+	for (const char of datePattern) {
 		switch (char) {
 			case 'd':
 				formattedDate += day + separator;
@@ -259,10 +341,6 @@ export function getDate(
 			case 'y':
 				formattedDate += year + separator;
 				break;
-			case 'h':
-			case 'i':
-			case 's':
-				continue;
 			default:
 				throw new Error(`Unrecognized pattern: ${char}`);
 		}
@@ -271,54 +349,59 @@ export function getDate(
 	formattedDate = formattedDate.slice(0, -1);
 
 	const timePart: string = withHours
-		? `${ampm ? `${hours}:${minutes}` : `${hours}:${minutes}`}${
-				withSeconds ? `:${seconds}` : ''
-		  }${ampmStr}`
+		? `${hours}:${minutes}${withSeconds ? `:${seconds}` : ''}${ampmStr}`
 		: '';
 
-	return formattedDate + (timePart ? ' ' + timePart : '');
+	return formattedDate + (timePart ? ` ${timePart}` : '');
 }
 
 /**
- * Get a Date object from a date in a string.
+ * Get a Date object from a date string in dd/mm/yyyy or dd/mm/yyyy hh:mm:ss format.
  *
- * @param {string} str - A Date in a string.
+ * @param {string | null} str - A date in string format.
  *
- * @returns {Date | null} The Date object or null if is an invalid date.
+ * @returns {Date | null} The Date object or null if it is an invalid date.
  *
  * @example
  * getDateFromString('03/01/2023')
  * // Returns "Tue Jan 03 2023 00:00:00 GMT+0100"
  */
-export function getDateFromString(str: string): Date | null {
-	if (str === null) {
+export function getDateFromString(str: string | null): Date | null {
+	if (str === null || str.trim() === '') {
 		return null;
 	}
-	let day: number = 0;
-	let month: number = 0;
-	let year: number = 0;
-	let hour: number = 0;
-	let minutes: number = 0;
-	let seconds: number = 0;
 
-	if (str.includes(' ')) {
-		const strParts: string[] = str.split(' ');
-		const dateParts: string[] = strParts[0].split('/');
-		const hourParts: string[] = strParts[1].split(':');
-		day = parseInt(dateParts[0]);
-		month = parseInt(dateParts[1]) - 1;
-		year = parseInt(dateParts[2]);
-		hour = parseInt(hourParts[0]);
-		minutes = parseInt(hourParts[1]);
-		seconds = parseInt(hourParts[2]);
-	} else {
-		const dateParts: string[] = str.split('/');
-		day = parseInt(dateParts[0]);
-		month = parseInt(dateParts[1]) - 1;
-		year = parseInt(dateParts[2]);
+	const trimmedStr: string = str.trim();
+
+	const dateTimeRegex: RegExp =
+		/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?: (\d{1,2}):(\d{1,2}):(\d{1,2}))?$/;
+	const match: RegExpExecArray | null = dateTimeRegex.exec(trimmedStr);
+
+	if (match === null) {
+		return null;
 	}
 
+	const day: number = parseInt(match[1], 10);
+	const month: number = parseInt(match[2], 10) - 1;
+	const year: number = parseInt(match[3], 10);
+	const hour: number = match[4] ? parseInt(match[4], 10) : 0;
+	const minutes: number = match[5] ? parseInt(match[5], 10) : 0;
+	const seconds: number = match[6] ? parseInt(match[6], 10) : 0;
+
 	const date: Date = new Date(year, month, day, hour, minutes, seconds);
+
+	if (
+		Number.isNaN(date.getTime()) ||
+		date.getFullYear() !== year ||
+		date.getMonth() !== month ||
+		date.getDate() !== day ||
+		date.getHours() !== hour ||
+		date.getMinutes() !== minutes ||
+		date.getSeconds() !== seconds
+	) {
+		return null;
+	}
+
 	return date;
 }
 
@@ -326,7 +409,6 @@ export function getDateFromString(str: string): Date | null {
  * Get a random number from a range (min, max).
  *
  * @param {number} min - Minimum number to get.
- *
  * @param {number} max - Maximum number to get.
  *
  * @returns {number} Random number between min and max.
@@ -343,7 +425,6 @@ export function getRandomNumber(min: number, max: number): number {
  * Get a string representation of a Date object (year-month-day). `withHours` indicates if (hour:minutes:seconds) should also be returned.
  *
  * @param {Date | null} date - A Date object or null.
- *
  * @param {boolean} withHours - Indicates if hour:minutes:seconds should also be returned.
  *
  * @return {string | null} String representation of the Date object.
@@ -359,6 +440,7 @@ export function getStringFromDate(
 	if (date === null) {
 		return null;
 	}
+
 	const year: number = date.getFullYear();
 	const month: number = date.getMonth() + 1;
 	const day: number = date.getDate();
@@ -386,16 +468,16 @@ export function getStringFromDate(
 /**
  * Set a Date object to the start of the day (00:00:00.000).
  *
- * @param d - Date to set to start of day.
+ * @param {Date} d - Date to set to start of day.
  *
- * @returns New Date object set to start of day.
+ * @returns {Date} New Date object set to start of day.
  *
  * @example
  * startOfDay(new Date(2023, 0, 1, 15, 30, 45, 123))
  * // Returns "Sun Jan 01 2023 00:00:00 GMT+0100"
  */
 export function startOfDay(d: Date): Date {
-	const x = new Date(d);
+	const x: Date = new Date(d);
 	x.setHours(0, 0, 0, 0);
 	return x;
 }
@@ -403,16 +485,16 @@ export function startOfDay(d: Date): Date {
 /**
  * Set a Date object to the end of the day (23:59:59.999).
  *
- * @param d - Date to set to end of day.
+ * @param {Date} d - Date to set to end of day.
  *
- * @returns New Date object set to end of day.
+ * @returns {Date} New Date object set to end of day.
  *
  * @example
  * endOfDay(new Date(2023, 0, 1, 15, 30, 45, 123))
  * // Returns "Sun Jan 01 2023 23:59:59 GMT+0100"
  */
 export function endOfDay(d: Date): Date {
-	const x = new Date(d);
+	const x: Date = new Date(d);
 	x.setHours(23, 59, 59, 999);
 	return x;
 }
@@ -438,7 +520,7 @@ export function endOfDay(d: Date): Date {
  * // Returns false
  */
 export function rangesOverlap(a: [Date, Date], b: [Date, Date]): boolean {
-	// Solapan si el inicio de uno es <= fin del otro y viceversa
+	// Ranges overlap if the start of one is before or equal to the end of the other and vice versa.
 	return a[0] <= b[1] && b[0] <= a[1];
 }
 
@@ -458,7 +540,7 @@ export function getTwoNumberDecimal(value: number): number {
 }
 
 /**
- * Function to get the numerical values of an hexadecimal color value (i.e. FF0000 -> {r: 1, g: 0, b: 0}
+ * Function to get the numerical values of an hexadecimal color value (i.e. FF0000 -> {r: 1, g: 0, b: 0}).
  *
  * @param {string} hex - The color on hexadecimal format.
  *
@@ -471,19 +553,20 @@ export function getTwoNumberDecimal(value: number): number {
 export function hexToRgbFloat(hex: string): ColorValues | null {
 	const result: RegExpExecArray | null =
 		/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
 	return result
 		? {
 				r: convertRange(parseInt(result[1], 16), 0, 255, 0, 1),
 				g: convertRange(parseInt(result[2], 16), 0, 255, 0, 1),
 				b: convertRange(parseInt(result[3], 16), 0, 255, 0, 1)
-		  }
+			}
 		: null;
 }
 
 /**
  * Function to format a given string to a number.
  *
- * @param {string} str - The string number to be formatted.
+ * @param {string | null | undefined} str - The string number to be formatted.
  *
  * @returns {number} The formatted number.
  *
@@ -491,17 +574,18 @@ export function hexToRgbFloat(hex: string): ColorValues | null {
  * toNumber("15,267");
  * // Returns 15.267
  */
-export function toNumber(str: string): number {
+export function toNumber(str: string | null | undefined): number {
 	if (str === null || str === undefined || str === '') {
 		return 0;
 	}
+
 	return parseFloat(str.replace(',', '.'));
 }
 
 /**
- * Function to decode a previously encoded string. Returns null if null is given.
+ * Function to decode a previously encoded string.
  *
- * @param {string | null} str - The previously encoded string.
+ * @param {string | null | undefined} str - The previously encoded string.
  *
  * @returns {string} The decoded string.
  *
@@ -509,26 +593,27 @@ export function toNumber(str: string): number {
  * urldecode("test+osumi+urldecode");
  * // Returns "test osumi urldecode"
  */
-export function urldecode(str: string | null): string {
+export function urldecode(str: string | null | undefined): string {
 	if (str === null || str === undefined || str === '') {
 		return '';
 	}
+
 	return decodeURIComponent(
 		str
 			.replace(/\+/g, '%20')
-			.replace(/\%21/g, '!')
-			.replace(/\%27/g, "'")
-			.replace(/\%28/g, '(')
-			.replace(/\%29/g, ')')
-			.replace(/\%2A/g, '*')
-			.replace(/\%7E/g, '~')
+			.replace(/%21/g, '!')
+			.replace(/%27/g, "'")
+			.replace(/%28/g, '(')
+			.replace(/%29/g, ')')
+			.replace(/%2A/g, '*')
+			.replace(/%7E/g, '~')
 	);
 }
 
 /**
- * Function to safely URLEncode a string. Returns null if null is given.
+ * Function to safely encode a string for use in URLs.
  *
- * @param {string | null} str - The string encoded.
+ * @param {string | null | undefined} str - The string to encode.
  *
  * @returns {string | null} The encoded string.
  *
@@ -536,18 +621,19 @@ export function urldecode(str: string | null): string {
  * urlencode("test osumi urlencode");
  * // Returns "test+osumi+urlencode"
  */
-export function urlencode(str: string | null): string | null {
+export function urlencode(str: string | null | undefined): string | null {
 	if (str === null || str === undefined) {
 		return null;
 	}
+
 	return encodeURIComponent(str)
-		.replace(/\%20/g, '+')
+		.replace(/%20/g, '+')
 		.replace(/!/g, '%21')
 		.replace(/'/g, '%27')
 		.replace(/\(/g, '%28')
 		.replace(/\)/g, '%29')
 		.replace(/\*/g, '%2A')
-		.replace(/\~/g, '%7E');
+		.replace(/~/g, '%7E');
 }
 
 /**
@@ -566,8 +652,9 @@ export function urlencode(str: string | null): string | null {
  * // Returns false
  */
 export function validateEmail(email: string): boolean {
-	const re =
-		/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	const re: RegExp =
+		/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
 	return re.test(email.toLowerCase());
 }
 
@@ -587,9 +674,9 @@ export function validateEmail(email: string): boolean {
  * // Returns 'cafe'
  */
 export function normalize(s: string): string {
-	return (s || '')
+	return s
 		.toLowerCase()
-		.normalize('NFD') // quitar tildes/acentos
+		.normalize('NFD')
 		.replace(/\p{Diacritic}/gu, '')
 		.trim();
 }
