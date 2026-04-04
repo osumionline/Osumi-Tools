@@ -1,6 +1,6 @@
 {
 	"name": "@osumi/tools",
-	"version": "1.7.0",
+	"version": "1.7.1",
 	"description": "Tools to be used on Angular projects.",
 	"type": "module",
 	"exports": {
