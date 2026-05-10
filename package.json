@@ -35,10 +35,10 @@
 	"homepage": "https://github.com/osumionline/Osumi-Tools#readme",
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
-		"eslint": "^10.2.1",
+		"eslint": "^10.3.0",
 		"typedoc": "^0.28.19",
 		"typescript": "^6.0.3",
-		"typescript-eslint": "^8.59.1",
+		"typescript-eslint": "^8.59.2",
 		"vitest": "^4.1.5"
 	},
 	"files": [
